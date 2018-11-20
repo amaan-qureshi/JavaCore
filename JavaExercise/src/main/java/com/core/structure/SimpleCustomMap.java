@@ -4,7 +4,11 @@ package com.core.structure;
 public class SimpleCustomMap<K, V> {
 
     private final static int INITIAL_CAPACITY = 1 << 4; //16
+    private final float DEFAULT_LOAD_FACTOR = 0.75f;
+
     private int size;
+    private int bucketCount;
+
     private Entry<K, V>[] buckets;
 
     public SimpleCustomMap(int initialCapacity) {
@@ -17,6 +21,10 @@ public class SimpleCustomMap<K, V> {
 
     public V put(K key, V value) {
 
+        if(hasThresholdReached()){
+            resizeBuckets();
+        }
+
         int hashcode = getHashCode(key);
         int position = hashcode % this.buckets.length;
         Entry currentEntry = buckets[position];
@@ -24,6 +32,7 @@ public class SimpleCustomMap<K, V> {
         if (currentEntry == null) {
             buckets[position] = new Entry<K, V>(key, value, null);
             size++;
+            bucketCount++;
         } else {
 
             while (currentEntry.next != null) {
@@ -43,6 +52,19 @@ public class SimpleCustomMap<K, V> {
         }
 
         return value;
+    }
+
+    private boolean hasThresholdReached() {
+        float currentLoad = (float)bucketCount/(float)buckets.length;
+        return DEFAULT_LOAD_FACTOR < currentLoad;
+    }
+
+    private void resizeBuckets() {
+        Entry<K, V>[] tmpBuckets  = new Entry[buckets.length*2];
+        for(int i=0;i<buckets.length;i++){
+            tmpBuckets[i] = buckets[i];
+        }
+        buckets = tmpBuckets;
     }
 
     public V get(K key) {

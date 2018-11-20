@@ -12,6 +12,8 @@ public class SimpleCustomMapTest {
     @Test
     public void testMyMap(){
 
+        Map<String,String> map1 = new HashMap<String,String>();
+
         SimpleCustomMap<Integer,Integer> map = new SimpleCustomMap<Integer, Integer>();
         map.put(1,10);
         map.put(2,20);
