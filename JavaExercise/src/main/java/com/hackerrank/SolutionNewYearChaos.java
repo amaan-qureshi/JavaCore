@@ -7,53 +7,58 @@ import java.util.Map;
 
 public class SolutionNewYearChaos {
 
+
     static void minimumBribes(int[] q) {
 
-        int[] sorted = q.clone();
-        Arrays.sort(sorted);
 
-        Map<Integer,Integer> intPositionMap = new HashMap<>();
-        int count = 0;
-        for(int i : sorted){
-            intPositionMap.put(i,count);
-            count++;
-        }
-        boolean chaotic = false;
         int bribes = 0;
-        for(int i = 0 ; i < q.length ; i++){
+        boolean chaotic = false;
 
-            if(intPositionMap.get(q[i]) - 2 <=  i){
+        for (int i = q.length - 1; i >= 0; i--) {
 
-                if(intPositionMap.get(q[i]) != i){
-                    if(intPositionMap.get(q[i]) - 1 == i){
-                        bribes++;
-                    }
-                    else if (intPositionMap.get(q[i]) - 2 == i){
-                        bribes++;
-                        bribes++;
-                    }
-                }
 
-            }
-            else{
+            if (q[i] == i+1)
+                continue;
+
+            if (q[i - 1] == i+1) {
+
+                bribes++;
+
+                int temp = q[i - 1];
+                q[i - 1] = q[i];
+                q[i] = temp;
+
+            } else if (q[i - 2] == i+1) {
+
+                bribes += 2;
+
+                int temp = q[i - 2];
+                q[i - 2] = q[i - 1];
+                q[i - 1] = q[i];
+                q[i] = temp;
+
+            } else {
                 chaotic = true;
                 break;
             }
 
+
         }
 
-        if(chaotic){
-            System.out.println("Too chaotic");
+
+        if (chaotic) {
+            System.out.print("Too Chaotic");
+        } else {
+            System.out.print(bribes);
         }
-        else{
-            System.out.println(bribes);
-        }
+
+
     }
+
 
     public static void main(String[] args) {
 
         int[] q = {1, 2, 5, 3, 7, 8, 6, 4};
-
         minimumBribes(q);
 
     }
