@@ -1,4 +1,4 @@
-package com.hackerrank;
+package com.hackerrank.array;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;

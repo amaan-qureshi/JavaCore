@@ -1,4 +1,4 @@
-package com.hackerrank;
+package com.hackerrank.array;
 
 public class SolutionMinimumSwaps2 {
 
