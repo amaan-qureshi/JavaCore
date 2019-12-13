@@ -5,7 +5,7 @@ public class SolutionRepeatedString {
     // Complete the repeatedString function below.
     static long repeatedString(String s, long n) {
 
-        long count = 0;
+      /*  long count = 0;
 
         count =  (s.chars().mapToObj(c -> (char) c).filter( c -> c == 'a').count()) * (n/s.length());
 
@@ -14,7 +14,8 @@ public class SolutionRepeatedString {
 
         count = count + remainingNoOfAs;
 
-        return count;
+        return count;*/
+      return -1;
     }
 
     public static void main(String[] args) {

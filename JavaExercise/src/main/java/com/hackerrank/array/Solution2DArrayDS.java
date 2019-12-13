@@ -1,15 +1,11 @@
 package com.hackerrank.array;
 
 
-import java.io.*;
-import java.math.*;
-import java.security.*;
-import java.text.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import static java.util.Arrays.*;
+import static java.util.Arrays.asList;
 
 public class Solution2DArrayDS {
 
