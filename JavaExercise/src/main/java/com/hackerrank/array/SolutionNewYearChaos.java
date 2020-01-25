@@ -20,7 +20,7 @@ public class SolutionNewYearChaos {
             if (q[i] == i+1)
                 continue;
 
-            if (q[i - 1] == i+1) {
+            if (i-1 >= 0 && q[i - 1] == i+1) {
 
                 bribes++;
 
@@ -28,7 +28,7 @@ public class SolutionNewYearChaos {
                 q[i - 1] = q[i];
                 q[i] = temp;
 
-            } else if (q[i - 2] == i+1) {
+            } else if (i-2 >= 0 && q[i - 2] == i+1) {
 
                 bribes += 2;
 
@@ -58,7 +58,7 @@ public class SolutionNewYearChaos {
 
     public static void main(String[] args) {
 
-        int[] q = {1, 2, 5, 3, 7, 8, 6, 4};
+        int[] q = {2, 1, 5, 3, 4};
         minimumBribes(q);
 
     }
