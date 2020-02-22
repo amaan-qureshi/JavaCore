@@ -1,60 +1,55 @@
 package com.algoexpert;
-
-
 import java.util.*;
 
 public class LowestCommonManager {
 
     public static void main(String[] args) {
 
-        OrgChart d = new OrgChart('D');
-    }
+        OrgChart a = new OrgChart('A');
+        a.directReports.addAll(Arrays.asList(new OrgChart('B'),new OrgChart('C')));
+        a.directReports.get(0).directReports.addAll(Arrays.asList(new OrgChart('D'),new OrgChart('E')));
+        a.directReports.get(0).directReports.get(0).directReports.addAll(Arrays.asList(new OrgChart('H'),new OrgChart('I')));
+        a.directReports.get(1).directReports.addAll(Arrays.asList(new OrgChart('F'),new OrgChart('G')));
 
+        System.out.println(getLowestCommonManager(a, a.directReports.get(0).directReports.get(1),a.directReports.get(0).directReports.get(0).directReports.get(1)).name);
+    }
 
     public static OrgChart getLowestCommonManager(OrgChart topManager, OrgChart reportOne, OrgChart reportTwo) {
 
-        List<OrgChart> pathToReporteeOne = new ArrayList<>();
-        depthFirst(topManager,reportOne,pathToReporteeOne);
-
-        List<OrgChart> pathToReporteeTwo = new ArrayList<>();
-        depthFirst(topManager,reportOne,pathToReporteeOne);
-
-        List<OrgChart> longer = pathToReporteeOne.size() >=  pathToReporteeTwo.size()  ? pathToReporteeOne : pathToReporteeTwo;
-        List<OrgChart> shorter = pathToReporteeOne.size() <  pathToReporteeTwo.size()  ? pathToReporteeTwo : pathToReporteeOne;
-
-        for(int i = shorter.size()-1 ; i >= 0 ; i--){
-
-            final int index = i;
-            Optional<OrgChart> result = longer.stream().filter(orgChart -> orgChart.name == shorter.get(index).name).findAny();
-            if(result.isPresent()){
-                return result.get();
-            }
-        }
-
-        return null;
+        return getOrgInfo(topManager,reportOne,reportTwo).lcm;
     }
 
-    private static void depthFirst(OrgChart topManager, OrgChart reportOne, List<OrgChart> pathToReporteeOne) {
+    public static OrgInfo getOrgInfo(OrgChart manager, OrgChart reportOne, OrgChart reportTwo) {
 
-        Stack<OrgChart> stack = new Stack<OrgChart>();
-        stack.push(topManager);
+        int importantReportees = 0;
 
-        while(!stack.isEmpty()){
+        for(OrgChart reportees : manager.directReports){
 
-            OrgChart o = stack.pop();
-            if(o.name == reportOne.name){
-                Object[] os =  stack.toArray();
-                for(Object oe : os){
-                    pathToReporteeOne.add((OrgChart)oe);
-                }
-
-                return;
+            OrgInfo orgInfo = getOrgInfo(reportees,reportOne,reportTwo);
+            if(orgInfo.lcm != null){
+                return orgInfo;
             }
+            importantReportees = importantReportees+orgInfo.numOfImpEmp;
+        }
 
-            for(OrgChart d : o.directReports){
-                stack.push(d);
-            }
+        if(manager==reportOne || manager == reportTwo){
+            importantReportees++;
+        }
 
+        OrgChart lcm = importantReportees == 2 ? manager : null;
+
+        return new OrgInfo(lcm,importantReportees);
+    }
+
+    static class OrgInfo{
+
+        OrgChart lcm;
+        int numOfImpEmp;
+
+
+        OrgInfo(OrgChart lcm,int numOfImpEmp){
+            this.lcm = lcm;
+            this.numOfImpEmp = numOfImpEmp;
         }
 
     }
@@ -75,5 +70,4 @@ public class LowestCommonManager {
             }
         }
     }
-
 }
