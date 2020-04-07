@@ -1,4 +1,4 @@
-package com.hackerrank.warmup;
+package com;
 
 import java.util.Map;
 import java.util.function.Function;
