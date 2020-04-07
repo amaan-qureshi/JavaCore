@@ -9,6 +9,9 @@ public class ShiftedBinarySearch {
 
     public static int shiftedBinarySearch(int[] array, int target) {
 
+        Thread t = new Thread();
+       // t.sleep(200);
+
 
         int left = 0;
         int right = array.length - 1;

@@ -8,6 +8,8 @@ public class LongestSubString {
     }
 
     public static String longestSubstringWithoutDuplication(String str) {
+
+        List a = new ArrayList<String>();
         // Write your code here
         String longestSubString = "";
         int startIndex = 0;
