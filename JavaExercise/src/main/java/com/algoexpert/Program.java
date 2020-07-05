@@ -2,183 +2,163 @@ package com.algoexpert;// Do not edit the class below except for
 // the insert method. Feel free to add new
 // properties and methods to the class.
 
-import java.util.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
-public class Program {
+import java.util.*;
+import java.util.function.BiFunction;
+
+// Do not edit the class below except for
+// the insert method. Feel free to add new
+// properties and methods to the class.
+class Program {
 
     public static void main(String[] args) {
 
-        Program p = new Program();
-        p.insert(5);
-        System.out.println(p.getMedian());
-        p.insert(10);
-        System.out.println(p.getMedian());
-        p.insert(100);
-        System.out.println(p.getMedian());
-        p.insert(200);
-        System.out.println(p.getMedian());
-        p.insert(6);
-        System.out.println(p.getMedian());
-        p.insert(13);
-        System.out.println(p.getMedian());
-
+        LinkedList<Integer> stack = new LinkedList<>();
 
     }
 
-    List<Integer> maxHeap = new ArrayList<>();
-    List<Integer> minHeap = new ArrayList<>();
+    static class ContinuousMedianHandler {
 
-    public double getMedian() {
+        Heap lowers = new Heap((a, b) -> a > b, new ArrayList<>());
+        Heap greaters = new Heap((a, b) -> a < b, new ArrayList<>());
+        double median = 0;
+        BiFunction<Integer,Integer, Boolean> comp = (a, b) -> a < b;
 
-        if (minHeap.size() - maxHeap.size() == 1) {
-            return minHeap.get(0);
-        } else if (maxHeap.size() - minHeap.size() == 1) {
-            return maxHeap.get(0);
-        } else if (minHeap.size() == maxHeap.size()) {
-            if (maxHeap.size() == 0) {
-                return -1;
-            }
-            return (double) ((minHeap.get(0) + maxHeap.get(0)) / (double) 2);
-        } else {
-            return -1;
-        }
-    }
-
-    public void insert(int number) {
-        // Write your code here.
-        if (minHeap.size() == 0 && maxHeap.size() == 0) {
-            maxHeap.add(number);
-            return;
-        }
-
-        if (number >= maxHeap.get(0)) {
-            insertIntoMin(number);
-
-        } else {
-            insertIntoMax(number);
-        }
-
-        balanceHeaps();
-
-    }
-
-    public void balanceHeaps() {
-
-        if (maxHeap.size() - minHeap.size() > 1) {
-
-            int number = maxHeap.get(0);
-            insertIntoMin(number);
-            removeFromMax();
-
-        } else if (minHeap.size() - maxHeap.size() > 1) {
-
-            int number = minHeap.get(0);
-            insertIntoMax(number);
-            removeFromMin();
-        }
-
-    }
-
-    public void removeFromMax() {
-
-        int number = maxHeap.get(0);
-        swap(maxHeap, 0, maxHeap.size() - 1);
-        maxHeap.remove(maxHeap.size() - 1);
-        siftDownMax(0, maxHeap.size() - 1, maxHeap);
-    }
-
-    public void removeFromMin() {
-
-        int number = minHeap.get(0);
-        swap(minHeap, 0, minHeap.size() - 1);
-        minHeap.remove(minHeap.size() - 1);
-        siftDownMin(0, minHeap.size() - 1, minHeap);
-    }
-
-
-    public void siftDownMax(int currentIdx, int endIdx, List<Integer> heap) {
-        // Write your code here.
-
-        int largest = currentIdx;
-
-        while (largest < heap.size() / 2) {
-
-            int left = (2 * currentIdx) + 1;
-            int right = (2 * currentIdx) + 2;
-
-            if (left < heap.size() && heap.get(currentIdx) < heap.get(left)) {
-                largest = left;
-            }
-            if (right < heap.size() && heap.get(largest) < heap.get(right)) {
-                largest = right;
-            }
-            if (largest != currentIdx) {
-                swap(heap, largest, currentIdx);
-                currentIdx = largest;
+        public void insert(int number) {
+            // Write your code here.
+            if (lowers.length == 0 || number < lowers.peek()) {
+                lowers.insert(number);
             } else {
-                break;
+                greaters.insert(number);
             }
+            rebalance();
+            updateMedian();
         }
-    }
 
-    public void siftDownMin(int currentIdx, int endIdx, List<Integer> heap) {
-        // Write your code here.
+        public double getMedian() {
+            return median;
+        }
 
-        int smallest = currentIdx;
 
-        while (smallest < heap.size() / 2) {
+        public void rebalance() {
+            if (lowers.length - greaters.length == 2) {
+                greaters.insert(lowers.remove());
 
-            int left = (2 * currentIdx) + 1;
-            int right = (2 * currentIdx) + 2;
-
-            if (left < heap.size() && heap.get(currentIdx) > heap.get(left)) {
-                smallest = left;
+            } else if (lowers.length - greaters.length == -2) {
+                lowers.insert(greaters.remove());
             }
-            if (right < heap.size() && heap.get(smallest) > heap.get(right)) {
-                smallest = right;
-            }
-            if (smallest != currentIdx) {
-                swap(heap, smallest, currentIdx);
-                currentIdx = smallest;
+
+
+        }
+
+        public void updateMedian() {
+
+            if (lowers.length == greaters.length) {
+                median = ((double) lowers.peek() + (double) greaters.peek()) / 2;
+            } else if (lowers.length > greaters.length) {
+                median = lowers.peek();
             } else {
-                break;
+                median = greaters.peek();
+            }
+
+        }
+
+        static class Heap {
+
+            private BiFunction<Integer, Integer, Boolean> comparisonFunc;
+            private List<Integer> heap = new ArrayList<Integer>();
+            private int length = 0;
+
+            public Heap(BiFunction<Integer, Integer, Boolean> comparisonFunc, List<Integer> array) {
+
+                this.comparisonFunc = comparisonFunc;
+                this.heap = buildHeap(array);
+                this.length = heap.size();
+            }
+
+            public int peek() {
+                return heap.get(0);
+            }
+
+            public void insert(int value) {
+                heap.add(value);
+                siftUp(heap.size() - 1, heap);
+                length++;
+            }
+
+            public int remove() {
+                swap(0, heap.size() - 1, heap);
+                int value = heap.get(heap.size() - 1);
+                heap.remove(heap.size() - 1);
+                siftDown(0, heap.size() - 1, heap);
+                length--;
+                return value;
+            }
+
+            public List<Integer> buildHeap(List<Integer> array) {
+                int parent = (array.size() - 2) / 2;
+                for (int i = parent; i >= 0; i--) {
+                    siftDown(i, array.size() - 1, array);
+                }
+                return array;
+            }
+
+            private void swap(int s, int d, List<Integer> array) {
+                int val1 = array.get(s);
+                array.set(s, array.get(d));
+                array.set(d, val1);
+            }
+
+            public void siftUp(int idx, List<Integer> array) {
+
+                int parentIdx = (idx - 1) / 2;
+
+                while (parentIdx > 0) {
+
+                    if (comparisonFunc.apply(array.get(idx), array.get(parentIdx))) {
+                        swap(idx, parentIdx, array);
+                        idx = parentIdx;
+                        parentIdx = (idx - 1) / 2;
+                    } else {
+                        return;
+                    }
+
+                }
+
+            }
+
+            public void siftDown(int idx, int endIdx, List<Integer> array) {
+
+                int child1Idx = (idx * 2) + 1;
+
+                while (child1Idx <= endIdx) {
+
+                    int child2Idx = (idx * 2) + 2 <= endIdx ? (idx * 2) + 2 : -1;
+                    int swapIdx;
+                    if (child2Idx != -1) {
+
+                        if (comparisonFunc.apply(array.get(child2Idx), array.get(child1Idx))) {
+                            swapIdx = child2Idx;
+                        } else {
+                            swapIdx = child1Idx;
+                        }
+
+                    } else {
+                        swapIdx = child1Idx;
+                    }
+
+                    if (comparisonFunc.apply(array.get(swapIdx), array.get(idx))) {
+                        swap(swapIdx, idx, array);
+                        idx = swapIdx;
+                        child1Idx = (idx * 2) + 1;
+                    } else {
+                        return;
+                    }
+
+                }
             }
         }
-    }
-
-    public void insertIntoMax(int number) {
-        maxHeap.add(number);
-        siftUpMax(maxHeap.size() - 1, maxHeap);
-    }
-
-    public void siftUpMax(int currentIdx, List<Integer> heap) {
-
-        int parent = (currentIdx - 1) / 2;
-        if (parent >= 0 && heap.get(parent) < heap.get(currentIdx)) {
-            swap(heap, parent, currentIdx);
-            siftUpMax(parent, heap);
-        }
-    }
-
-    public void insertIntoMin(int number) {
-        minHeap.add(number);
-        siftUpMin(minHeap.size() - 1, minHeap);
-    }
-
-    public void siftUpMin(int currentIdx, List<Integer> heap) {
-
-        int parent = (currentIdx - 1) / 2;
-        if (parent >= 0 && heap.get(parent) > heap.get(currentIdx)) {
-            swap(heap, parent, currentIdx);
-            siftUpMin(parent, heap);
-        }
 
     }
-
-    public void swap(List<Integer> array, int p, int q) {
-        int temp = array.get(p);
-        array.set(p, array.get(q));
-        array.set(q, temp);
-    }
-
 }
