@@ -3,6 +3,9 @@ package com.hackerrank;
 public class LevenshteinDistance {
 
     public static void main(String[] args) {
+
+
+
         System.out.println(levenshteinDistance("abc","abc"));
     }
 
@@ -14,7 +17,7 @@ public class LevenshteinDistance {
         for(int i = 0 ; i < str1.length()+1 ; i++){
             for(int j = 0 ; j < str2.length()+1 ; j++){
                 matrix[i][j] = j;
-            }
+        }
             matrix[i][0] = i;
         }
 

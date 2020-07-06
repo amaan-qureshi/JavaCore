@@ -14,8 +14,39 @@ public class MergeSortedArray {
         arrays.add(Arrays.asList(3, 6, 12, 20, 150));
 
 
-        System.out.println(mergeSortedArrays(arrays));
+        System.out.println(mergeSortedArrays2(arrays));
 
+    }
+
+    public static List<Integer> mergeSortedArrays2(List<List<Integer>> arrays) {
+
+        List<Integer> sortedList = new ArrayList<>();
+        PriorityQueue<Integer> heap = new PriorityQueue<>();
+
+        int counter = 0;
+
+        while(true) {
+
+            boolean isAnyElementAdded = false;
+            for (int i = 0; i < arrays.size(); i++) {
+
+                if (counter < arrays.get(i).size()) {
+                    heap.add(arrays.get(i).get(counter));
+                    isAnyElementAdded = true;
+                }
+            }
+
+
+            while (!heap.isEmpty()) {
+                sortedList.add(heap.poll());
+            }
+            if(!isAnyElementAdded){
+                break;
+            }
+            counter++;
+        }
+
+        return  sortedList;
     }
 
     public static List<Integer> mergeSortedArrays(List<List<Integer>> arrays) {
